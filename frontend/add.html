@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FINANCIAL ANALYSIS & EXPENSE TRACKING SYSTEM</title>
+    <link rel="stylesheet" href="add.css">
+</head>
+<body>
+    <div class="add-acc">
+        <h2>Add Account</h2>
+        <form>
+            <label for="account-name">Account Name:</label>
+            <input type="text" placeholder="Account Name" required>
+            <label for="account-type">Account Type:</label>
+            <select required>
+                <option value="">Select Account Type</option>
+                
+                <option value="checking"> bank account balance</option>
+                <option value="credit">Credit</option>
+            </select>
+            <label for="initial-balance">Initial Balance:</label>
+            <input type="number" placeholder="Initial Balance" required>
+            <button type="submit">Add Account</button>
+            <button type="button" onclick="window.location.href='Dashboard .html'">Back</button>
+        </form>
+    </div>
+</body>
+</html>

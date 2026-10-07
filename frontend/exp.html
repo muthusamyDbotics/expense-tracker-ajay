@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FINANCIAL ANALYSIS & EXPENSE TRACKING SYSTEM</title>
+    <link rel="stylesheet" href="exp.css">
+</head>
+<body>
+    <div class="exp">
+        <h2>Expenses</h2>
+        <form>
+            <label for="expense-name">Expense Name:</label>
+            <input type="text" placeholder="Expense Name" required>
+            <label for="expense-amount">Expense Amount Select:</label>
+            <select required>
+                <option value="">Select Account</option>
+                <option value="checking">Bank Account Balance</option>
+                <option value="credit">Credit</option>
+            </select>
+            <label for="expense-type">Expense Type:</label>
+            <select required>
+                <option value="">Select Expense Type</option>
+                <option value="food">Food</option>
+                <option value="transportation">Transportation</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="utilities">Utilities</option>
+                <option value="healthcare">Healthcare</option>
+                <option value="education">Education</option>
+                <option value="shopping">Shopping</option>
+                <option value="travel">Travel</option>
+                <option value="assets">Assets</option>
+            </select>
+            <label for="expense-date">Expense Date:</label>
+            <input type="date" required>
+            <button type="submit">Add Expense</button>
+            <button type="button" onclick="window.location.href='Dashboard .html'" >Back</button>
+        </form>
+    </div>
+</body>
+</html>

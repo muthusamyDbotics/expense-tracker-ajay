@@ -1,0 +1,74 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f6fa;
+}
+
+.sidenav {
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background-color: #204b83;
+    padding: 20px;
+}
+
+
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo h1 {
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+}
+.sidenav ul {
+    list-style: none;
+}
+
+.sidenav ul li {
+    margin-bottom: 10px;
+}
+
+.sidenav ul li a {
+    display: block;
+    padding: 12px 15px;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.account-de,
+.totalexp,
+.saving,
+.rem{
+    display: inline-block;
+    width: 300px;
+    height: 150px;
+    padding: 20px;
+    margin: 60px;
+    margin-top: 50px;
+    margin-left: 300px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.account-de h2,
+.totalexp h2,
+.saving h2,
+.rem h2 {
+    font-size: 20px;
+    color: #204b83;
+    margin: 0;
+}

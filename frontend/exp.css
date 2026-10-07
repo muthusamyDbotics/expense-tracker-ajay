@@ -1,0 +1,62 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} 
+
+.exp{
+    width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+    background-color: #F8F0E3;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.exp h2{
+    text-align: center;
+    color: #343231;
+    margin-bottom: 20px;
+}
+
+.exp form{
+    display: flex;
+    flex-direction: column;
+}
+
+.exp form label{
+    margin-bottom: 5px;
+    color: #343231;
+}
+
+.exp form input[type="text"],
+.exp form input[type="number"],
+.exp form select{
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.exp form input[type="date"]{
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+.exp form button{
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #638ed3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.exp form button[type="button"]{
+    background-color: #000000;
+}
