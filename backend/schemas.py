@@ -7,7 +7,6 @@ class UserCreate(BaseModel):
     password: str
 
 
-
 class UserLogin(BaseModel):
     username: str
     password: str
@@ -20,7 +19,6 @@ class AccountCreate(BaseModel):
     account_type: str
     balance: float
     user_id: int
-
 
 
 

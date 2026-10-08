@@ -13,7 +13,6 @@ router = APIRouter(
 
 
 
-
 @router.post("/")
 def add_account(
     account: AccountCreate,
@@ -21,7 +20,6 @@ def add_account(
 ):
 
     new_account = Account(
-
         account_name=account.account_name,
         account_type=account.account_type,
         balance=account.balance,
@@ -29,14 +27,15 @@ def add_account(
     )
 
     db.add(new_account)
+
     db.commit()
+
     db.refresh(new_account)
 
     return {
         "message": "Account added",
         "account_id": new_account.id
     }
-
 
 
 

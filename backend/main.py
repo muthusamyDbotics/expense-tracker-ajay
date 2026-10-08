@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 
-from database import Base, engine
+from database import engine, Base
 
+# Import models so SQLAlchemy can create the tables
+import models
+
+# Import routers
 from routers import auth
 from routers import account
 from routers import expense
@@ -9,16 +13,36 @@ from routers import dashboard
 
 
 
-Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(
+    bind=engine
+)
 
 
-app = FastAPI()
+
+app = FastAPI(
+    title="Finance Tracker API",
+    description="Expense and Financial Analysis API",
+    version="1.0.0"
+)
 
 
-app.include_router(auth.router)
-app.include_router(account.router)
-app.include_router(expense.router)
-app.include_router(dashboard.router)
+
+app.include_router(
+    auth.router
+)
+
+app.include_router(
+    account.router
+)
+
+app.include_router(
+    expense.router
+)
+
+app.include_router(
+    dashboard.router
+)
+
 
 
 @app.get("/")
