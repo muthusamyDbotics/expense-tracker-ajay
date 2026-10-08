@@ -1,23 +1,29 @@
-from fastapi import FastAPI , Depends
-from schemas import ExpenseCreate as expense_create
-from sqlalchemy.orm import Session
-from database import SessionLocal 
-from models import Expense
+from fastapi import FastAPI
+
+from database import Base, engine
+
+from routers import auth
+from routers import account
+from routers import expense
+from routers import dashboard
+
+
+
+Base.metadata.create_all(bind=engine)
+
 
 app = FastAPI()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+
+app.include_router(auth.router)
+app.include_router(account.router)
+app.include_router(expense.router)
+app.include_router(dashboard.router)
 
 
-@app.post("/expenses", response_model=expense_create)
-def create_expense(expense: expense_create , db: Session = Depends(get_db)):
-    db_expense = Expense(**expense.dict())
-    db.add(db_expense)
-    db.commit()
-    db.refresh()
-    return db_expense
+@app.get("/")
+def home():
+
+    return {
+        "message": "Finance Tracker API is running"
+    }

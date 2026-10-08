@@ -1,16 +1,34 @@
 from pydantic import BaseModel
 
 
-class expenseBase(BaseModel):
+class UserCreate(BaseModel):
+    username: str
+    email: str
+    password: str
+
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+
+
+class AccountCreate(BaseModel):
+    account_name: str
+    account_type: str
+    balance: float
+    user_id: int
+
+
+
+
+class ExpenseCreate(BaseModel):
     title: str
     amount: float
-    date: date
     category: str
-    
-class expenseCreate(expenseBase):
-    pass
-
-class expenseResponse(expenseBase):
-    id: int 
-    class Config:
-        orm_mode = True
+    description: str | None = None
+    date: str
+    account_id: int
+    user_id: int
