@@ -72,3 +72,15 @@ body {
     color: #204b83;
     margin: 0;
 }
+
+.cointainer h3 {
+    font-size: 20px;
+    color: #204b83;
+    margin: 0;
+}
+.cointainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
