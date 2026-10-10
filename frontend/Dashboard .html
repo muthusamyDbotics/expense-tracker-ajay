@@ -3,40 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FINANCIAL ANALYSIS & EXPENSE TRACKING SYSTEM</title>
+    <title>Finance Tracker - Dashboard</title>
     <link rel="stylesheet" href="Dashboard .css">
 </head>
 <body>
+
     <div class="sidenav">
         <div class="logo">
             <h1>Finance Tracker</h1>
         </div>
         <ul>
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#" onclick="window.location.href='add.html'">Add Account</a></li>
-            <li><a href="#" onclick="window.location.href='exp.html '">Expenses</a></li>
-            <li><a href="#" onclick="window.location.href='login.html'">Logout</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="add.html">Add Account</a></li>
+            <li><a href="exp.html">Expenses</a></li>
+            <li><a href="#" id="logout">Logout</a></li>
         </ul>
     </div>
-
     <div class="account-de">
         <h2>Account Details</h2>
+        <div class="value" id="account-count">0</div>
+        <div class="acc-list" id="account-list"></div>
     </div>
-
     <div class="totalexp">
         <h2>Total Expenses</h2>
+        <div class="value" id="total-expenses">₹0.00</div>
     </div>
-
     <div class="saving">
         <h2>Saving</h2>
+        <div class="value" id="total-balance">₹0.00</div>
     </div>
-
     <div class="rem">
         <h2>Remaining Balance</h2>
+        <div class="value" id="remaining-balance">₹0.00</div>
     </div>
 
     <div class="cointainer">
-        <h3>expenses</h3>
+        <div class="box">
+            <h3>Expenses</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Account</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="expense-rows"></tbody>
+            </table>
+        </div>
     </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:8000";
+
+        // Redirect to login if the user is not logged in
+        const userId = localStorage.getItem("user_id");
+        if (!userId) {
+            window.location.href = "login.html";
+        }
+
+        // Logout: clear saved user and go to login
+        document.getElementById("logout").addEventListener("click", function (event) {
+            event.preventDefault();
+            localStorage.removeItem("user_id");
+            localStorage.removeItem("username");
+            window.location.href = "login.html";
+        });
+
+        function money(value) {
+            return Number(value).toLocaleString("en-IN", {
+                style: "currency",
+                currency: "INR"
+            });
+        }
+
+        async function loadDashboard() {
+            try {
+                // GET /dashboard/{user_id}, /accounts/{user_id}, /expenses/{user_id}
+                const responses = await Promise.all([
+                    fetch(API_URL + "/dashboard/" + userId),
+                    fetch(API_URL + "/accounts/" + userId),
+                    fetch(API_URL + "/expenses/" + userId)
+                ]);
+
+                const summary = await responses[0].json();
+                const accounts = await responses[1].json();
+                const expenses = await responses[2].json();
+
+                // Summary cards (keys come from dashboard.py)
+                document.getElementById("total-expenses").textContent = money(summary.total_expenses);
+                document.getElementById("total-balance").textContent = money(summary.total_balance);
+                document.getElementById("remaining-balance").textContent = money(summary.remaining_balance);
+
+                // Account details card
+                document.getElementById("account-count").textContent =
+                    accounts.length + (accounts.length === 1 ? " Account" : " Accounts");
+
+                const accountList = document.getElementById("account-list");
+                const accountNames = {};
+
+                accounts.forEach(function (acc) {
+                    accountNames[acc.id] = acc.account_name;
+
+                    const line = document.createElement("div");
+                    line.textContent = acc.account_name + ": " + money(acc.balance);
+                    accountList.appendChild(line);
+                });
+
+                // Expense table
+                const rows = document.getElementById("expense-rows");
+
+                if (expenses.length === 0) {
+                    rows.innerHTML = '<tr><td colspan="5">No expenses yet.</td></tr>';
+                    return;
+                }
+
+                expenses.forEach(function (exp) {
+                    const tr = document.createElement("tr");
+                    const cells = [
+                        exp.date,
+                        exp.title,
+                        exp.category,
+                        accountNames[exp.account_id] || "Account " + exp.account_id,
+                        money(exp.amount)
+                    ];
+
+                    cells.forEach(function (text) {
+                        const td = document.createElement("td");
+                        td.textContent = text;
+                        tr.appendChild(td);
+                    });
+
+                    rows.appendChild(tr);
+                });
+
+            } catch (error) {
+                console.error("Dashboard error:", error);
+                alert("Cannot connect to FastAPI. Is the backend running?");
+            }
+        }
+
+        loadDashboard();
+    </script>
+
 </body>
 </html>

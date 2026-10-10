@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FINANCIAL ANALYSIS & EXPENSE TRACKING SYSTEM</title>
+    <title>Financial Analysis & Expense Tracking System</title>
     <link rel="stylesheet" href="exp.css">
 </head>
 <body>
+
     <div class="exp">
-        <h2>Expenses</h2>
-        <form>
-            <label for="expense-name">Expense Name:</label>
-            <input type="text" placeholder="Expense Name" required>
-            <label for="expense-amount">Expense Amount Select:</label>
-            <select required>
-                <option value="">Select Account</option>
-                <option value="checking">Bank Account Balance</option>
-                <option value="credit">Credit</option>
-            </select>
-            <label for="expense-type">Expense Type:</label>
-            <select required>
-                <option value="">Select Expense Type</option>
+        <h2>Add Expense</h2>
+        <p class="subtitle">Enter your expense details below</p>
+        <form id="expense-form">
+            <label for="title">Expense Name</label>
+            <input type="text" id="title" placeholder="Enter expense name" required>
+            <label for="amount">Expense Amount (₹)</label>
+            <input type="number" id="amount" placeholder="Enter amount" min="0.01" step="0.01" required>
+            <label for="category">Expense Category</label>
+            <select id="category" required>
+                <option value="">Select Category</option>
                 <option value="food">Food</option>
                 <option value="transportation">Transportation</option>
                 <option value="entertainment">Entertainment</option>
@@ -31,11 +29,127 @@
                 <option value="travel">Travel</option>
                 <option value="assets">Assets</option>
             </select>
-            <label for="expense-date">Expense Date:</label>
-            <input type="date" required>
-            <button type="submit" onclick="window.location.href='Dashboard .html'">Add Expense</button>
-            <button type="button" onclick="window.location.href='Dashboard .html'" >Back</button>
+            <label for="description">Description</label>
+            <textarea id="description" placeholder="Enter expense description" rows="3"></textarea>
+            <label for="date">Expense Date</label>
+            <input type="date" id="date" required>
+            <label for="account_id">Account</label>
+            <select id="account_id" required>
+                <option value="">Loading accounts...</option>
+            </select>
+            <p id="message" role="status" aria-live="polite"></p>
+            <button type="submit" id="add-button">Add Expense</button>
+            <button type="button" class="back-button" onclick="window.location.href='Dashboard .html'">
+                Back to Dashboard
+            </button>
         </form>
     </div>
+
+    <script>
+        const API_URL = `http://127.0.0.1:8000`;
+
+        // Only logged-in users can open this page
+        const userId = Number(localStorage.getItem("user_id"));
+        if (!userId) {
+            window.location.href = "login.html";
+        }
+
+        const form = document.getElementById("expense-form");
+        const message = document.getElementById("message");
+        const addButton = document.getElementById("add-button");
+        const dateInput = document.getElementById("date");
+        const accountSelect = document.getElementById("account_id");
+
+        // Default date to today
+        dateInput.value = new Date().toISOString().split("T")[0];
+
+        // Load this user's accounts: GET /accounts/{user_id}
+        async function loadAccounts() {
+            try {
+                const response = await fetch(API_URL + "/accounts/" + userId);
+                const accounts = await response.json();
+
+                if (!response.ok || accounts.length === 0) {
+                    accountSelect.innerHTML = '<option value="">No accounts found - add one first</option>';
+                    return;
+                }
+
+                accountSelect.innerHTML = '<option value="">Select Account</option>';
+
+                accounts.forEach(function (acc) {
+                    const option = document.createElement("option");
+                    option.value = acc.id;
+                    option.textContent = acc.account_name + " (₹" + acc.balance + ")";
+                    accountSelect.appendChild(option);
+                });
+
+            } catch (error) {
+                accountSelect.innerHTML = '<option value="">Could not load accounts</option>';
+                console.error("Load accounts error:", error);
+            }
+        }
+
+        loadAccounts();
+
+        // Submit expense: POST /expenses/
+        form.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            // Field names must match ExpenseCreate in schemas.py
+            const expenseData = {
+                title: document.getElementById("title").value.trim(),
+                amount: Number(document.getElementById("amount").value),
+                category: document.getElementById("category").value,
+                description: document.getElementById("description").value.trim(),
+                date: dateInput.value,
+                account_id: Number(accountSelect.value),
+                user_id: userId
+            };
+
+            if (!expenseData.title || !expenseData.category || !expenseData.date ||
+                !(expenseData.amount > 0) || !expenseData.account_id) {
+                message.style.color = "red";
+                message.textContent = "Please fill all required fields and select an account.";
+                return;
+            }
+
+            addButton.disabled = true;
+            message.style.color = "black";
+            message.textContent = "Saving expense...";
+
+            try {
+                const response = await fetch(API_URL + "/expenses/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(expenseData)
+                });
+
+                const result = await response.json().catch(function () { return {}; });
+
+                if (response.ok) {
+                    message.style.color = "green";
+                    message.textContent = "Expense added successfully!";
+
+                    setTimeout(function () {
+                        window.location.href = "Dashboard .html";
+                    }, 800);
+                } else {
+                
+                    message.style.color = "red";
+                    message.textContent = typeof result.detail === "string"
+                        ? result.detail
+                        : JSON.stringify(result.detail || "Failed to add expense.");
+                }
+
+            } catch (error) {
+                message.style.color = "red";
+                message.textContent = "Cannot connect to FastAPI. Is the backend running?";
+                console.error("Expense error:", error);
+            } finally {
+                addButton.disabled = false;
+            }
+        });
+    </script>
+
 </body>
 </html>
