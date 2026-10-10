@@ -3,24 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FINANCIAL ANALYSIS & EXPENSE TRACKING SYSTEM</title>
+    <title>Financial Analysis & Expense Tracking System</title>
     <link rel="stylesheet" href="login.css">
 </head>
 <body>
 
-    <div class="login">
+    <div class="login" id="login-form">
         <h2>Login</h2>
-        <form>
+        <form id="loginForm">
             <label for="username">Username:</label>
-            <input type="text" placeholder="Username" required>
+            <input type="text" id="username" placeholder="Enter your username" required>
             <label for="password">Password:</label>
-            <input type="password" placeholder="Password" required>
-            <button type="button" onclick="window.location.href='Dashboard .html'">
-    Login
-</button>
-            <button type="button" onclick="window.location.href='createacc.html'">Create Account</button>
+            <input type="password" id="password" placeholder="Enter your password" required>
+            <button type="submit" id="login">Login</button>
+            <button type="button" id="createaccount">Create Account</button>
         </form>
+        <p id="message"></p>
     </div>
 
+    <script>
+
+        const API_URL = "http://127.0.0.1:8000";
+        // Dashboard file name - must match your real file name exactly
+        const DASHBOARD_PAGE = "Dashboard .html";
+        const loginForm = document.getElementById("loginForm");
+        const message = document.getElementById("message");
+        // Already logged in? Go straight to the dashboard
+        if (localStorage.getItem("user_id")) {
+            window.location.href = "Dashboard .html";
+        }
+        loginForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            message.textContent = "Logging in...";
+            try {
+                const response = await fetch(API_URL + `/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: username, password: password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Backend returns: message, user_id, username
+                    localStorage.setItem("user_id", data.user_id);
+                    localStorage.setItem("username", data.username);
+
+                    message.textContent = "Login successful! Opening dashboard...";
+                    window.location.href = DASHBOARD_PAGE;
+                } else {
+                    message.textContent = data.detail || "Login failed.";
+                }
+
+            } catch (error) {
+                message.textContent = "Unable to connect to the backend. Please try again.";
+                console.error("Login error:", error);
+            }
+        });
+
+        // Go to the registration page
+        document.getElementById("createaccount").addEventListener("click", function () {
+            window.location.href = "createacc.html";
+        });
+    </script>
+
 </body>
-</html> 
+</html>

@@ -5,8 +5,6 @@ from database import get_db
 from models import Account, Expense
 from schemas import ExpenseCreate
 
-
-
 router = APIRouter(
     prefix="/expenses",
     tags=["Expenses"]
